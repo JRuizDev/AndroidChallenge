@@ -20,6 +20,9 @@ class MainViewModel @Inject constructor() : ViewModel() {
 
     var page = 0
 
+    var isLastPage: Boolean = false
+    var isLoading: Boolean = false
+
     init {
         viewModelScope.launch {
             repositoriesLiveData.postValue(mock())
@@ -30,6 +33,7 @@ class MainViewModel @Inject constructor() : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             delay(500)
             page++
+            isLastPage = page == 10
 
             repositoriesLiveData.value?.let {
                 repositoriesLiveData.postValue(it + mock())

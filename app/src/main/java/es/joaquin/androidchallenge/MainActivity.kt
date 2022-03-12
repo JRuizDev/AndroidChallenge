@@ -18,8 +18,6 @@ class MainActivity : AppCompatActivity() {
     private val adapter = RepositoriesAdapter()
 
     private val viewModel: MainViewModel by viewModels()
-    var isLastPage: Boolean = false
-    var isLoading: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,15 +37,15 @@ class MainActivity : AppCompatActivity() {
         binding.recycler.layoutManager = layoutManager
         binding.recycler.addOnScrollListener(object : PaginationScrollListener(layoutManager) {
             override fun isLastPage(): Boolean {
-                return isLastPage
+                return viewModel.isLastPage
             }
 
             override fun isLoading(): Boolean {
-                return isLoading
+                return viewModel.isLoading
             }
 
             override fun loadMoreItems() {
-                isLoading = true
+                viewModel.isLoading = true
                 viewModel.getNetxtPage()
             }
 
@@ -56,7 +54,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun observeViewModel() {
         viewModel.getRepositoriesLiveData().observe(this, {
-            isLoading = false
+            viewModel.isLoading = false
             adapter.submitList(it)
         })
     }
