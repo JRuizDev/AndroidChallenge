@@ -1,6 +1,6 @@
 package es.joaquin.androidchallenge.model
 
-data class RepositoriesVo(
+data class ChallengesVo(
     val id: Int,
     val name: String,
     val description: String,

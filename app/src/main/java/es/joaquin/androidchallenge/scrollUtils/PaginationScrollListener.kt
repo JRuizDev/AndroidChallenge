@@ -1,4 +1,4 @@
-package es.joaquin.androidchallenge
+package es.joaquin.androidchallenge.scrollUtils
 
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView

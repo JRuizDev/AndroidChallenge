@@ -5,19 +5,19 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
-import es.joaquin.androidchallenge.adapter.RepositoriesAdapter
+import es.joaquin.androidchallenge.adapter.ChallengesAdapter
 import es.joaquin.androidchallenge.databinding.ActivityMainBinding
-import es.joaquin.androidchallenge.model.RepositoriesVo
-import es.joaquin.androidchallenge.viewmodel.MainViewModel
+import es.joaquin.androidchallenge.scrollUtils.PaginationScrollListener
+import es.joaquin.androidchallenge.viewmodel.ChallengesViewModel
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
-    private val adapter = RepositoriesAdapter()
+    private val adapter = ChallengesAdapter()
 
-    private val viewModel: MainViewModel by viewModels()
+    private val viewModel: ChallengesViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,7 +28,6 @@ class MainActivity : AppCompatActivity() {
         initView()
 
         observeViewModel()
-//        mock()
     }
 
     private fun initView() {
@@ -53,16 +52,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun observeViewModel() {
-        viewModel.getRepositoriesLiveData().observe(this, {
+        viewModel.getChallengesLiveData().observe(this, {
             viewModel.isLoading = false
             adapter.submitList(it)
         })
     }
 
-    private fun mock() {
-        val mockList = (0..50).map {
-            RepositoriesVo(it, it.toString(), it.toString(), it.toString(), it % 5 == 0)
-        }
-        adapter.submitList(mockList)
-    }
 }
