@@ -1,16 +1,22 @@
 package es.joaquin.androidchallenge
 
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import dagger.hilt.android.AndroidEntryPoint
 import es.joaquin.androidchallenge.adapter.RepositoriesAdapter
 import es.joaquin.androidchallenge.databinding.ActivityMainBinding
 import es.joaquin.androidchallenge.model.RepositoriesVo
+import es.joaquin.androidchallenge.viewmodel.MainViewModel
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
     private val adapter = RepositoriesAdapter()
+
+    private val viewModel: MainViewModel by viewModels()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,7 +27,14 @@ class MainActivity : AppCompatActivity() {
 
         binding.recycler.adapter = this.adapter
 
-        mock()
+        observeViewModel()
+//        mock()
+    }
+
+    private fun observeViewModel() {
+        viewModel.getRepositoriesLiveData().observe(this, {
+            adapter.submitList(it)
+        })
     }
 
     private fun mock() {
