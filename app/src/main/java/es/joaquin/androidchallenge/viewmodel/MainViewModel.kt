@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import es.joaquin.androidchallenge.model.RepositoriesVo
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -16,16 +18,30 @@ class MainViewModel @Inject constructor() : ViewModel() {
 
     fun getRepositoriesLiveData() = repositoriesLiveData as LiveData<List<RepositoriesVo>>
 
+    var page = 0
+
     init {
         viewModelScope.launch {
-            mock()
+            repositoriesLiveData.postValue(mock())
         }
     }
 
-    private fun mock() {
-        val mockList = (0..50).map {
+    fun getNetxtPage() {
+        viewModelScope.launch(Dispatchers.IO) {
+            delay(500)
+            page++
+
+            repositoriesLiveData.value?.let {
+                repositoriesLiveData.postValue(it + mock())
+            }
+        }
+    }
+
+    private fun mock(): List<RepositoriesVo> {
+        val fistValue: Int = (page.toString() + "1").toInt()
+        val secondValue: Int = ((page + 1).toString() + "0").toInt()
+        return (fistValue..secondValue).map {
             RepositoriesVo(it, it.toString(), it.toString(), it.toString(), it % 5 == 0)
         }
-        repositoriesLiveData.postValue(mockList)
     }
 }

@@ -3,6 +3,7 @@ package es.joaquin.androidchallenge
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import es.joaquin.androidchallenge.adapter.RepositoriesAdapter
 import es.joaquin.androidchallenge.databinding.ActivityMainBinding
@@ -17,7 +18,8 @@ class MainActivity : AppCompatActivity() {
     private val adapter = RepositoriesAdapter()
 
     private val viewModel: MainViewModel by viewModels()
-
+    var isLastPage: Boolean = false
+    var isLoading: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,14 +27,36 @@ class MainActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
 
-        binding.recycler.adapter = this.adapter
+        initView()
 
         observeViewModel()
 //        mock()
     }
 
+    private fun initView() {
+        val layoutManager = LinearLayoutManager(this)
+        binding.recycler.adapter = this.adapter
+        binding.recycler.layoutManager = layoutManager
+        binding.recycler.addOnScrollListener(object : PaginationScrollListener(layoutManager) {
+            override fun isLastPage(): Boolean {
+                return isLastPage
+            }
+
+            override fun isLoading(): Boolean {
+                return isLoading
+            }
+
+            override fun loadMoreItems() {
+                isLoading = true
+                viewModel.getNetxtPage()
+            }
+
+        })
+    }
+
     private fun observeViewModel() {
         viewModel.getRepositoriesLiveData().observe(this, {
+            isLoading = false
             adapter.submitList(it)
         })
     }
